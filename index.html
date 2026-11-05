@@ -1,7 +1,983 @@
-<h1>Aula inicial gitFlow V1.0</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aprenda os conceitos iniciais de GitFlow e entenda como organizar o desenvolvimento com branches.">
+  <title>Aula inicial GitFlow · V1.0</title>
 
-<h2>O que é gitFlow?</h2>
-<p>GitFlow é um modelo de branch que ajuda a gerenciar o desenvolvimento de software em equipes.</p>
-<a href="https://nvie.com/posts/a-successful-git-branching-model/" target="_blank">Leia mais sobre gitFlow</a>
-<p>O gitFlow define um conjunto de regras para criar e gerenciar branches, 
-  facilitando o desenvolvimento paralelo e a integração de novas funcionalidades.</p>  
+  <style>
+    :root {
+      --fundo: #f3f6fb;
+      --branco: #ffffff;
+      --texto: #142849;
+      --secundario: #52617a;
+      --azul: #244bd8;
+      --verde: #087c73;
+      --laranja: #a44020;
+      --roxo: #6745a3;
+      --borda: #dce3ee;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 24px;
+    }
+
+    body {
+      margin: 0;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.7;
+    }
+
+    h1, h2, h3, p, figure {
+      margin: 0;
+    }
+
+    h1, h2, h3 {
+      font-family: Bahnschrift, "Arial Narrow", sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:focus-visible {
+      outline: 3px solid var(--azul);
+      outline-offset: 6px;
+    }
+
+    code {
+      font-family: Consolas, monospace;
+    }
+
+    ::selection {
+      background: #dbe4ff;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .pular-conteudo {
+      position: absolute;
+      top: -100px;
+      left: 20px;
+      z-index: 10;
+      padding: 12px 18px;
+      background: white;
+    }
+
+    .pular-conteudo:focus {
+      top: 15px;
+    }
+
+    /* Cabeçalho */
+
+    .cabecalho {
+      min-height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 1px solid var(--borda);
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 25px;
+      font-weight: 750;
+      letter-spacing: -1px;
+    }
+
+    .marca svg {
+      width: 30px;
+      height: 30px;
+      fill: var(--fundo);
+      stroke: var(--azul);
+      stroke-width: 2.3;
+    }
+
+    .marca span {
+      color: var(--azul);
+    }
+
+    nav {
+      display: flex;
+      gap: 28px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    nav a {
+      padding-block: 12px;
+    }
+
+    nav a:hover,
+    .rodape a:hover {
+      color: var(--azul);
+    }
+
+    /* Apresentação */
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+      padding-block: 80px;
+    }
+
+    .etiqueta {
+      display: block;
+      color: var(--azul);
+      font: 600 11px/1.6 Consolas, monospace;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin-top: 22px;
+      font-size: clamp(52px, 6vw, 78px);
+      line-height: 1.03;
+      letter-spacing: -3px;
+    }
+
+    h1 span {
+      color: var(--azul);
+    }
+
+    .versao {
+      display: inline-block;
+      vertical-align: top;
+      margin: 15px 0 0 12px;
+      padding: 5px 8px;
+      border: 1px solid #b5c4f1;
+      border-radius: 5px;
+      color: var(--azul);
+      font: 12px Consolas, monospace;
+      letter-spacing: 0;
+    }
+
+    .subtitulo {
+      margin-top: 28px;
+      font-size: 21px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .introducao {
+      max-width: 410px;
+      margin-top: 18px;
+      color: var(--secundario);
+      font-size: 15px;
+    }
+
+    .botao {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      padding: 12px 21px;
+      border: 1px solid var(--azul);
+      border-radius: 6px;
+      background: var(--azul);
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 180ms;
+    }
+
+    .botao:hover {
+      background: #193bb5;
+    }
+
+    .hero .botao {
+      margin-top: 28px;
+    }
+
+    .informacoes {
+      margin-top: 22px;
+      color: var(--secundario);
+      font-size: 11px;
+    }
+
+    /* Diagrama */
+
+    .diagrama {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid #d7dfed;
+      border-radius: 12px;
+      background: #f9fbff;
+      box-shadow: 0 18px 50px #14284908;
+      transform: rotate(-2deg);
+    }
+
+    .diagrama-cabecalho {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 20px;
+      border-bottom: 1px solid var(--borda);
+      color: var(--secundario);
+      font: 10px Consolas, monospace;
+      letter-spacing: .6px;
+    }
+
+    .diagrama-cabecalho span:last-child {
+      padding: 4px 7px;
+      border-radius: 4px;
+      background: #e8eefc;
+      color: var(--azul);
+      white-space: nowrap;
+    }
+
+    .diagrama svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    figcaption {
+      padding: 17px 20px;
+      border-top: 1px solid var(--borda);
+      color: var(--secundario);
+      font-size: 11px;
+    }
+
+    figcaption span {
+      margin-right: 7px;
+      color: var(--verde);
+    }
+
+    /* Conteúdo */
+
+    .conteudo {
+      border-top: 1px solid var(--borda);
+      background: var(--branco);
+    }
+
+    .secao {
+      padding-block: 64px;
+    }
+
+    h2 {
+      font-size: clamp(28px, 3vw, 38px);
+      line-height: 1.2;
+      letter-spacing: -1px;
+    }
+
+    .conceito {
+      display: grid;
+      grid-template-columns: 1fr 270px;
+      gap: 80px;
+      border-bottom: 1px solid var(--borda);
+    }
+
+    .conceito h2 {
+      margin-top: 14px;
+    }
+
+    .destaque {
+      margin-top: 24px;
+      font-size: 20px;
+      line-height: 1.65;
+    }
+
+    .texto {
+      margin-top: 17px;
+      color: var(--secundario);
+      font-size: 15px;
+    }
+
+    .link {
+      display: inline-block;
+      margin-top: 24px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #bac8f4;
+      color: var(--azul);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .link:hover {
+      border-color: var(--azul);
+    }
+
+    .nota {
+      align-self: center;
+      padding: 10px 0 10px 24px;
+      border-left: 2px solid #b6c7f3;
+    }
+
+    .nota > span {
+      color: var(--azul);
+      font: 34px Consolas, monospace;
+    }
+
+    .nota h3 {
+      margin-top: 10px;
+      font-size: 20px;
+    }
+
+    .nota p {
+      margin-top: 12px;
+      color: var(--secundario);
+      font-size: 13px;
+    }
+
+    /* Lista de branches */
+
+    .titulo-secao {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .titulo-secao h2 {
+      margin-top: 14px;
+    }
+
+    .titulo-secao > p {
+      color: var(--secundario);
+      font-size: 13px;
+    }
+
+    .branch {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      align-items: center;
+      gap: 32px;
+      padding-block: 24px;
+      border-top: 1px solid var(--borda);
+    }
+
+    .branch:last-child {
+      border-bottom: 1px solid var(--borda);
+    }
+
+    .branch h3 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+    }
+
+    .branch p {
+      color: var(--secundario);
+      font-size: 14px;
+    }
+
+    .ponto {
+      width: 9px;
+      height: 9px;
+      flex-shrink: 0;
+      border-radius: 50%;
+    }
+
+    .main { background: var(--azul); }
+    .develop { background: var(--verde); }
+    .feature { background: var(--laranja); }
+    .release { background: var(--roxo); }
+    .hotfix { background: #aa3448; }
+
+    .permanente {
+      padding: 3px 7px;
+      border-radius: 4px;
+      background: var(--fundo);
+      color: var(--secundario);
+      font: 10px "Segoe UI", sans-serif;
+    }
+
+    .observacao {
+      margin-top: 20px;
+      color: var(--secundario);
+      font-size: 12px;
+    }
+
+    /* Exemplo */
+
+    .pratica {
+      display: grid;
+      grid-template-columns: .85fr 1.15fr;
+      align-items: center;
+      gap: 65px;
+      border-top: 1px solid var(--borda);
+    }
+
+    .pratica h2 {
+      margin-top: 14px;
+    }
+
+    .pratica .texto {
+      font-size: 14px;
+    }
+
+    .terminal {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--texto);
+      border-radius: 10px;
+      background: var(--texto);
+      color: #e7edf9;
+    }
+
+    .terminal-cabecalho {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 20px;
+      border-bottom: 1px solid #ffffff20;
+      color: #b8c6df;
+      font: 11px Consolas, monospace;
+    }
+
+    .luzes {
+      display: flex;
+      gap: 5px;
+    }
+
+    .luzes i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #9eafca;
+    }
+
+    pre {
+      margin: 0;
+      padding: 26px 22px;
+      overflow-x: auto;
+      font: 13px/1.9 Consolas, monospace;
+    }
+
+    .comentario {
+      color: #acbad1;
+    }
+
+    .prompt {
+      color: #8edfd0;
+    }
+
+    .terminal-rodape {
+      padding: 14px 22px;
+      background: #ffffff08;
+      color: #ced9eb;
+      font-size: 11px;
+    }
+
+    /* Encerramento */
+
+    .encerramento {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      margin-bottom: 64px;
+      padding: 40px;
+      border: 1px solid var(--borda);
+      border-radius: 10px;
+      background: var(--fundo);
+    }
+
+    .encerramento h2 {
+      margin-top: 14px;
+      font-size: 29px;
+    }
+
+    .encerramento p {
+      margin-top: 17px;
+      color: var(--secundario);
+      font-size: 13px;
+    }
+
+    .botao-contorno {
+      flex-shrink: 0;
+      background: transparent;
+      color: var(--azul);
+    }
+
+    .botao-contorno:hover {
+      background: #e6edff;
+    }
+
+    .rodape {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-block: 28px;
+      color: var(--secundario);
+      font-size: 11px;
+    }
+
+    .rodape strong {
+      color: var(--texto);
+      font-size: 16px;
+    }
+
+    /* Celulares e tablets */
+
+    @media (max-width: 900px) {
+      .hero {
+        gap: 30px;
+      }
+
+      .conceito {
+        gap: 35px;
+        grid-template-columns: 1fr 230px;
+      }
+
+      .pratica {
+        gap: 30px;
+      }
+
+      .branch {
+        grid-template-columns: 230px 1fr;
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        width: calc(100% - 40px);
+      }
+
+      .cabecalho {
+        min-height: 80px;
+      }
+
+      .marca {
+        font-size: 22px;
+      }
+
+      nav {
+        gap: 16px;
+        font-size: 11px;
+      }
+
+      nav a:first-child {
+        display: none;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 42px;
+        padding-block: 48px;
+      }
+
+      h1 {
+        font-size: 64px;
+      }
+
+      .diagrama {
+        transform: none;
+      }
+
+      .secao {
+        padding-block: 44px;
+      }
+
+      .conceito,
+      .pratica {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .nota {
+        padding-block: 0;
+      }
+
+      .nota > span {
+        display: none;
+      }
+
+      .nota h3 {
+        margin-top: 0;
+      }
+
+      .titulo-secao {
+        display: block;
+      }
+
+      .titulo-secao > p {
+        margin-top: 16px;
+      }
+
+      .branch {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding-block: 22px;
+      }
+
+      .branch p {
+        padding-left: 21px;
+      }
+
+      .encerramento {
+        flex-direction: column;
+        align-items: start;
+        margin-bottom: 40px;
+        padding: 26px;
+      }
+
+      .encerramento h2 {
+        font-size: 26px;
+      }
+
+      .rodape {
+        flex-wrap: wrap;
+      }
+
+      .rodape > span {
+        flex-basis: 100%;
+        order: 3;
+      }
+    }
+
+    @media (max-width: 380px) {
+      h1 {
+        font-size: 54px;
+      }
+
+      .etiqueta {
+        font-size: 9px;
+      }
+
+      .diagrama-cabecalho {
+        padding-inline: 12px;
+        font-size: 9px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      * {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="cabecalho container">
+    <a class="marca" href="#inicio" aria-label="GitFlow, início">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M9 6v20M9 11c0 9 14 0 14 9v6"/>
+        <circle cx="9" cy="6" r="3"/>
+        <circle cx="9" cy="26" r="3"/>
+        <circle cx="23" cy="26" r="3"/>
+      </svg>
+      <div>git<span>flow</span></div>
+    </a>
+
+    <nav aria-label="Navegação da aula">
+      <a href="#conceito">O conceito</a>
+      <a href="#branches">As branches</a>
+      <a href="#pratica">Na prática ↗</a>
+    </nav>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero container" id="inicio" aria-labelledby="titulo">
+      <div>
+        <span class="etiqueta">Versionamento & colaboração</span>
+
+        <h1 id="titulo">
+          Aula inicial<br>
+          <span>GitFlow.</span><sup class="versao">V1.0</sup>
+        </h1>
+
+        <p class="subtitulo">
+          Cada mudança no seu lugar.<br>
+          Todo o time na mesma direção.
+        </p>
+
+        <p class="introducao">
+          Entenda como organizar o desenvolvimento com branches e dar um
+          caminho claro às novas funcionalidades.
+        </p>
+
+        <a class="botao" href="#conceito">
+          Começar a aula <span aria-hidden="true">↓</span>
+        </a>
+
+        <p class="informacoes">
+          Nível introdutório · Leitura + exemplo prático
+        </p>
+      </div>
+
+      <figure class="diagrama">
+        <div class="diagrama-cabecalho">
+          <span>UM PROJETO. VÁRIOS CAMINHOS.</span>
+          <span>git log</span>
+        </div>
+
+        <svg viewBox="0 0 540 350" role="img" aria-labelledby="diagrama-titulo diagrama-descricao">
+          <title id="diagrama-titulo">O caminho de uma funcionalidade</title>
+          <desc id="diagrama-descricao">
+            Uma feature sai de develop e retorna a ela.
+            Uma release sai de develop, chega a main e reintegra
+            seus ajustes em develop. O tempo avança da esquerda para a direita.
+          </desc>
+
+          <defs>
+            <pattern id="grade" width="22" height="22" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="1" fill="#d8e0ef"/>
+            </pattern>
+          </defs>
+
+          <rect width="540" height="350" fill="url(#grade)"/>
+
+          <g font-family="Consolas, monospace" font-size="14" font-weight="bold">
+            <text x="22" y="53" fill="#244bd8">main</text>
+            <text x="22" y="153" fill="#087c73">develop</text>
+            <text x="22" y="258" fill="#a44020">feature</text>
+          </g>
+
+          <g fill="none" stroke-width="4" stroke-linecap="round">
+            <path d="M35 78H505" stroke="#244bd8"/>
+            <path d="M64 78C85 78 83 178 120 178H505" stroke="#087c73"/>
+            <path
+              d="M150 178C183 178 171 280 209 280H273C312 280 303 178 341 178"
+              stroke="#c25730"
+            />
+            <path
+              d="M350 178C380 178 370 124 399 124H422C455 124 449 78 482 78M422 124C461 124 452 178 482 178"
+              stroke="#7355b1"
+            />
+          </g>
+
+          <g stroke="white" stroke-width="4">
+            <g fill="#244bd8">
+              <circle cx="64" cy="78" r="8"/>
+              <circle cx="482" cy="78" r="9"/>
+            </g>
+            <g fill="#087c73">
+              <circle cx="150" cy="178" r="8"/>
+              <circle cx="341" cy="178" r="8"/>
+              <circle cx="482" cy="178" r="8"/>
+            </g>
+            <g fill="#c25730">
+              <circle cx="211" cy="280" r="8"/>
+              <circle cx="270" cy="280" r="8"/>
+            </g>
+            <circle cx="416" cy="124" r="8" fill="#7355b1"/>
+          </g>
+
+          <g font-family="Consolas, monospace" font-size="12">
+            <text x="392" y="105" fill="#6745a3">release</text>
+            <text x="447" y="53" fill="#244bd8">v1.0</text>
+            <text x="190" y="314" fill="#80553f">sua nova ideia</text>
+          </g>
+        </svg>
+
+        <figcaption>
+          <span aria-hidden="true">●</span>
+          Desenvolva em paralelo. Integre com clareza.
+        </figcaption>
+      </figure>
+    </section>
+
+    <div class="conteudo">
+      <section class="conceito secao container" id="conceito" aria-labelledby="conceito-titulo">
+        <div>
+          <span class="etiqueta">O conceito</span>
+          <h2 id="conceito-titulo">O que é GitFlow?</h2>
+
+          <p class="destaque">
+            GitFlow é um modelo de branches que ajuda a gerenciar
+            o desenvolvimento de software em equipes.
+          </p>
+
+          <p class="texto">
+            O GitFlow define um conjunto de regras para criar e gerenciar
+            branches, facilitando o desenvolvimento paralelo e a integração
+            de novas funcionalidades.
+          </p>
+
+          <a
+            class="link"
+            href="https://nvie.com/posts/a-successful-git-branching-model/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Leia mais sobre GitFlow, artigo em inglês, abre em nova aba"
+          >
+            Leia mais sobre GitFlow ↗
+          </a>
+        </div>
+
+        <aside class="nota">
+          <span aria-hidden="true">↳</span>
+          <h3>Pense em caminhos.</h3>
+          <p>
+            Uma branch é uma linha de desenvolvimento. Ela permite
+            trabalhar em uma mudança e depois integrá-la ao restante
+            do projeto.
+          </p>
+        </aside>
+      </section>
+
+      <section class="secao container" id="branches" aria-labelledby="branches-titulo">
+        <div class="titulo-secao">
+          <div>
+            <span class="etiqueta">As branches</span>
+            <h2 id="branches-titulo">Um papel para cada caminho.</h2>
+          </div>
+          <p>Duas branches permanentes.<br>Três tipos de apoio.</p>
+        </div>
+
+        <div>
+          <article class="branch">
+            <h3>
+              <span class="ponto main" aria-hidden="true"></span>
+              <code>main</code>
+              <span class="permanente">permanente</span>
+            </h3>
+            <p>
+              Guarda o código pronto para produção e o histórico
+              das versões publicadas.
+            </p>
+          </article>
+
+          <article class="branch">
+            <h3>
+              <span class="ponto develop" aria-hidden="true"></span>
+              <code>develop</code>
+              <span class="permanente">permanente</span>
+            </h3>
+            <p>
+              Reúne as mudanças que farão parte da próxima
+              versão do software.
+            </p>
+          </article>
+
+          <article class="branch">
+            <h3>
+              <span class="ponto feature" aria-hidden="true"></span>
+              <code>feature/*</code>
+            </h3>
+            <p>
+              Sai de <code>develop</code> para uma nova funcionalidade
+              e volta para ela ao terminar.
+            </p>
+          </article>
+
+          <article class="branch">
+            <h3>
+              <span class="ponto release" aria-hidden="true"></span>
+              <code>release/*</code>
+            </h3>
+            <p>
+              Sai de <code>develop</code> para preparar uma versão.
+              Seus ajustes chegam a <code>main</code> e <code>develop</code>.
+            </p>
+          </article>
+
+          <article class="branch">
+            <h3>
+              <span class="ponto hotfix" aria-hidden="true"></span>
+              <code>hotfix/*</code>
+            </h3>
+            <p>
+              Sai de <code>main</code> para uma correção urgente,
+              depois integrada a <code>main</code> e <code>develop</code>.
+            </p>
+          </article>
+        </div>
+
+        <p class="observacao">
+          Neste guia, usamos <code>main</code>. No artigo original,
+          essa branch se chama <code>master</code>.
+        </p>
+      </section>
+
+      <section class="pratica secao container" id="pratica" aria-labelledby="pratica-titulo">
+        <div>
+          <span class="etiqueta">Na prática</span>
+          <h2 id="pratica-titulo">Sua primeira feature começa aqui.</h2>
+
+          <p class="texto">
+            Em um repositório que já tenha a branch <code>develop</code>,
+            crie um caminho para a sua nova funcionalidade.
+          </p>
+
+          <p class="observacao">
+            O exemplo usa comandos nativos do Git. Você não precisa
+            instalar uma extensão de GitFlow.
+          </p>
+        </div>
+
+        <div class="terminal">
+          <div class="terminal-cabecalho">
+            <span class="luzes" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </span>
+            <span>terminal · exemplo</span>
+          </div>
+
+          <pre aria-label="Comandos para criar uma branch de funcionalidade"><code><span class="comentario"># Vá para a branch de desenvolvimento</span>
+<span class="prompt">$</span> git switch develop
+
+<span class="comentario"># Crie e acesse a sua nova branch</span>
+<span class="prompt">$</span> git switch -c feature/minha-ideia</code></pre>
+
+          <div class="terminal-rodape">
+            Agora, suas mudanças têm um lugar próprio.
+          </div>
+        </div>
+      </section>
+
+      <section class="encerramento container" aria-labelledby="encerramento-titulo">
+        <div>
+          <span class="etiqueta">Para levar com você</span>
+          <h2 id="encerramento-titulo">
+            Organize as mudanças.<br>
+            Facilite o trabalho em equipe.
+          </h2>
+          <p>
+            GitFlow é uma opção para projetos com versões planejadas.
+            Escolha o fluxo que faz sentido para o seu time.
+          </p>
+        </div>
+
+        <a
+          class="botao botao-contorno"
+          href="https://nvie.com/posts/a-successful-git-branching-model/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Explorar o artigo original em inglês, abre em nova aba"
+        >
+          Explorar o artigo original <span aria-hidden="true">↗</span>
+        </a>
+      </section>
+    </div>
+  </main>
+
+  <footer class="rodape container">
+    <a href="#inicio"><strong>gitflow</strong> / aula inicial</a>
+    <span>V1.0 · Aprenda um caminho de cada vez.</span>
+    <a href="#inicio">Voltar ao topo ↑</a>
+  </footer>
+</body>
+</html>
